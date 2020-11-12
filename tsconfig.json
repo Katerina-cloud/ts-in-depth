@@ -6,13 +6,13 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "downlevelIteration": true,
     "removeComments": false,
     "noImplicitAny": false,
     "strictNullChecks": false,
     "outDir": "./dist",
     "incremental": true,
     "tsBuildInfoFile": "./buildcache"
-
   },
   "exclude": [
     "node_modules",
