@@ -15,6 +15,11 @@ enum Category { JavaScript, CSS, HTML, TypeScript, Angular, React }
 //     category: Category;
 // };
 
+interface DamageLogger {
+    (p: string): void;
+
+}
+
 interface Book {
     id: number;
     title: string;
@@ -22,8 +27,25 @@ interface Book {
     available: boolean;
     category: Category;
     pages?: number;
-    markDamaged?: (reason: string) => void;
+    // markDamaged?: (reason: string) => void;
+    markDamaged?:  DamageLogger;
 };
+
+type BookProperties = keyof Book;
+
+interface Person {
+    name: string;
+    email: string;
+}
+
+interface Author extends Person {
+    numBooksPublished: number;
+}
+
+interface Librerian extends Person {
+    department: string;
+    assistCustomer: (custName: string) => void;
+}
 
 function getAllBooks(): readonly Book[] {
     const books: readonly Book[] = [
@@ -155,6 +177,62 @@ function printBook(book: Book): void {
     console.log(`${book.title} by ${book.author}`)
 }
 
+function getBookProp(book: Book, prop: BookProperties): any {
+    if (typeof book[prop] === 'function') {
+        return book[prop][name];
+    }
+    return book[prop];
+}
+
+abstract class ReferenceItem {
+    #id: number;
+
+    private __publisher: string;
+
+    get publisher(): string {
+        return this.__publisher.toUpperCase();
+    }
+
+    set publisher(newPublisher: string) {
+        this.__publisher = newPublisher;
+    }
+    getID(): number {
+        return this.#id;
+    }
+
+    // title: string;
+    // year: number;
+    // constructor(newTitle: string, newYear: number) {
+    //     console.log('Creating a new ReferenceItem');
+    //     this.title = newTitle;
+    //     this.year = newYear;
+    // }
+    constructor(id: number, public title: string, protected year: number){
+        console.log('Creating a new ReferenceItem');
+        this.#id = id;
+    }
+
+    printItem(): void {
+        console.log(`${this.title} was published in ${this.year}`);
+    }
+
+    abstract printCitation(): void;
+}
+
+class Encyclopedia extends ReferenceItem {
+    constructor(id: number, title: string, year: number, public edition: number) {
+        super(id, title, year);
+    }
+
+    printItem(): void {
+        super.printItem();
+        console.log(`Edition: ${this.edition} (${this.year})`);
+    }
+
+    printCitation(): void {
+        console.log(`${this.title} - ${this.year}`);
+    }
+}
 //==========================================
 // task 03.01
 // const myID: string = createCustomerID('Ann', 10);
@@ -182,19 +260,76 @@ function printBook(book: Book): void {
 // console.log(getTitles(1, false));
 
 // task 03/04
-console.log(bookTitleTransform(getAllBooks()[0].title));
+// console.log(bookTitleTransform(getAllBooks()[0].title));
 // console.log(bookTitleTransform(10));
 
-const myBook: Book = {
-    id: 5,
-    title: 'Colors, Backgrounds, and Gradients',
-    author: 'Eric A. Meyer',
-    available: true,
-    category: Category.CSS,
-    // year: 2015,
-    // copies: 3
-    markDamaged: (reason: string) => console.log(`Damaged ${reason}`),
-};
+// const myBook: Book = {
+//     id: 5,
+//     title: 'Colors, Backgrounds, and Gradients',
+//     author: 'Eric A. Meyer',
+//     available: true,
+//     category: Category.CSS,
+//     // year: 2015,
+//     // copies: 3
+//     markDamaged: (reason: string) => console.log(`Damaged ${reason}`),
+// };
 
-printBook(myBook);
-myBook.markDamaged('by water');
+// printBook(myBook);
+// myBook.markDamaged('by water');
+
+// task 04/02
+// const logDamage: DamageLogger =
+//     (p: string) => console.log(`Damaged: ${reason}`);
+//     logDamage('missed back cover');
+
+//task 04/03
+
+// const favouriteAuthor: Author ={
+//     email: 'anna@jjj',
+//     name: 'Anna',
+//     numBooksPublished: 10,
+// }
+
+// const favouriteLibrarian: Librerian = {
+//     name: 'Boris',
+//     email: 'boris@fff',
+//     department: 'Classical literature',
+//     assistCustomer(name: string) {
+//         console.log(`Assist ${name}`);
+//     }
+// }
+
+//task 04/04
+// const offer: any = {
+//     magazine: [1, 2],
+// };
+// console.log(offer.magazine);
+// console.log(offer.magazine?.getTitle?.());
+// console.log(offer.magazine[0].getTitle?.());
+
+// const offer: any = {
+//     magazine: [],
+// };
+// console.log(offer.magazine?.[0]?.());
+
+// task 04/05
+
+// console.log(getBookProp(getAllBooks()[0], 'title'));
+// console.log(getBookProp(getAllBooks()[0], 'markDamaged'));
+// console.log(getBookProp(getAllBooks()[0], 'isbn'));
+
+// task 05/01
+// const ref: ReferenceItem = new ReferenceItem(1, 'JS', 2020);
+// console.log(ref);
+// ref.printItem();
+// ref.publisher = 'Random Publisher';
+// console.log(ref.publisher);
+// console.log(ref.getID());
+
+// task 05/02
+const refBook: Encyclopedia = new Encyclopedia(1, 'TS', 2020, 3);
+// console.log(refBook);
+// refBook.printItem();
+
+// task 05/03
+refBook.printCitation();
